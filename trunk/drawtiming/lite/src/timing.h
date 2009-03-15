@@ -25,7 +25,52 @@
 #include <iostream>
 #include <sstream>
 #include <exception>
-#include <Magick++.h>
+// #include <Magick++.h>
+
+namespace EPS
+{
+
+  //
+  // Representation of an x,y coordinate
+  //
+  struct Coordinate
+  {
+  public:
+    Coordinate ( void )
+      : _x(0),
+        _y(0)
+      { }
+    Coordinate ( double x_, double y_ )
+      : _x(x_),
+        _y(y_)
+      { }
+    virtual ~Coordinate ()
+      { }
+
+    void   x ( double x_ )
+      {
+        _x = x_;
+      }
+    double x ( void ) const
+      {
+        return _x;
+      }
+
+    void   y ( double y_ )
+      {
+        _y = y_;
+      }
+    double y ( void ) const
+      {
+        return _y;
+      }
+
+  private:
+    double _x;
+    double _y;
+  };
+};
+  typedef EPS::Coordinate Coordinate;
 
 namespace timing {
 
@@ -109,13 +154,13 @@ namespace timing {
     gc (void) : width(0), height(0) { }
     virtual ~gc() { }
 
-    virtual void bezier (const std::list<Magick::Coordinate> &points) = 0;
+    virtual void bezier (const std::list<EPS::Coordinate> &points) = 0;
     virtual void fill_color (const std::string &name) = 0;
     virtual void fill_opacity (int op) = 0;
     virtual void font (const std::string &name) = 0;
     virtual void line (int x1, int y1, int x2, int y2) = 0;
     virtual void point_size (int size) = 0;
-    virtual void polygon (const std::list<Magick::Coordinate> &points) = 0;
+    virtual void polygon (const std::list<EPS::Coordinate> &points) = 0;
     virtual void pop (void) = 0;
     virtual void push (void) = 0;
     virtual void scaling (double hscale, double vscale) = 0;
@@ -123,7 +168,7 @@ namespace timing {
     virtual void stroke_width (int w) = 0;
     virtual void text (int x, int y, const std::string &text) = 0;
   };
-
+/*
   class magick_gc : public gc {
     std::list<Magick::Drawable> drawables;
 
@@ -146,7 +191,7 @@ namespace timing {
 
     void draw (Magick::Image& img) const;
   };
-
+*/
   class postscript_gc : public gc {
     std::ostringstream ps_text;
 
@@ -154,13 +199,13 @@ namespace timing {
     postscript_gc (void);
     ~postscript_gc (void);
 
-    void bezier (const std::list<Magick::Coordinate> &points);
+    void bezier (const std::list<EPS::Coordinate> &points);
     void fill_color (const std::string &name);
     void fill_opacity (int op);
     void font (const std::string &name);
     void line (int x1, int y1, int x2, int y2);
     void point_size (int size);
-    void polygon (const std::list<Magick::Coordinate> &points);
+    void polygon (const std::list<EPS::Coordinate> &points);
     void pop (void);
     void push (void);
     void scaling (double hscale, double vscale);

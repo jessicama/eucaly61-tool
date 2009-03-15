@@ -22,7 +22,7 @@
 #include <fstream>
 using namespace std;
 using namespace timing;
-using namespace Magick;
+// using namespace Magick;
 
 int timing::vFontPointsize = 12;
 int timing::vLineWidth = 1;
@@ -286,17 +286,20 @@ ostream &operator<< (ostream &f, const depdata &dep) {
 
 static int label_width (const data &d) {
   int labelWidth = 0;
-  Image img;
-  TypeMetric m;
-
+/*  Image img;*/
+  int m = 0;
+/*
   img.font (vFont);
-  img.fontPointsize(vFontPointsize);
+  img.fontPointsize(vFontPointsize);*/
   for (signal_sequence::const_iterator i = d.sequence.begin ();
        i != d.sequence.end (); ++ i) {
-    img.fontTypeMetrics (*i, &m);
+/*    img.fontTypeMetrics (*i, &m);
     if (m.textWidth () > labelWidth)
-      labelWidth = (int) m.textWidth ();
+      labelWidth = (int) m.textWidth ();*/
+	  if ((*i).size()>m)
+		m = (*i).size();
   }
+  labelWidth = 0.7 * m * vFontPointsize;
   return labelWidth;
 }
 
@@ -665,7 +668,7 @@ void timing::render (gc &gc, const data &d, int w, int h, bool fixAspect) {
 }
 
 // ------------------------------------------------------------
-
+/*
 magick_gc::~magick_gc (void) {
 }
 
@@ -760,7 +763,7 @@ void magick_gc::draw (Magick::Image& img) const
 {
   img.draw (drawables);
 }
-
+*/
 // ------------------------------------------------------------
 
 postscript_gc::postscript_gc (void) {
@@ -771,8 +774,8 @@ postscript_gc::~postscript_gc (void) {
 
 // ------------------------------------------------------------
 
-void postscript_gc::bezier (const std::list<Magick::Coordinate> &points) {
-  std::list<Magick::Coordinate>::const_iterator i = points.begin();
+void postscript_gc::bezier (const std::list<EPS::Coordinate> &points) {
+  std::list<EPS::Coordinate>::const_iterator i = points.begin();
 
   ps_text << "newpath\n";
   ps_text << i->x () << ' ' << (height - i->y ()) << " moveto\n";
@@ -821,9 +824,9 @@ void postscript_gc::point_size (int size) {
 
 // ------------------------------------------------------------
 
-void postscript_gc::polygon (const std::list<Magick::Coordinate> &points) {
+void postscript_gc::polygon (const std::list<EPS::Coordinate> &points) {
   static const char *ops[] = {"stroke", "fill"};
-  std::list<Magick::Coordinate>::const_iterator i;
+  std::list<EPS::Coordinate>::const_iterator i;
   int j;
 
   for (j = 0; j < 2; j++) {
@@ -924,7 +927,7 @@ void postscript_gc::print (const std::string& filename) const {
   std::string ext = filename_ext (filename);
 
   if (!strcasecmp (ext.c_str (), "eps")) {
-    out << "%PS-Adobe-3.0 EPSF-3.0\n";
+    out << "%!PS-Adobe-3.0 EPSF-3.0\n";
     out << "%%BoundingBox: 0 0 " << width << ' ' << height << '\n';
     print (out);
   } else {
