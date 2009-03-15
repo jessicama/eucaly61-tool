@@ -25,7 +25,7 @@
 #  define getopt_long(C,V,S,O,I) getopt(C,V,S)
 #endif
 using namespace std;
-using namespace Magick;
+// using namespace Magick;
 
 #define FLAG_PAGESIZE 1
 #define FLAG_SCALE 2
@@ -197,19 +197,19 @@ int main (int argc, char *argv[]) {
       render_it (gc, flags, width, height, 1.0);
 
       gc.print (outfile);
-    } else {
+    } else { /*
       timing::magick_gc gc;
       render_it (gc, flags, width, height, scale);
 
       Image img (Geometry (gc.width, gc.height), "white");
       gc.draw (img);
-      img.write (outfile);
+      img.write (outfile); */
     }
-  }
+  } /*
   catch (Magick::Exception &err) {
     cerr << "caught Magick++ exception: " << err.what () << endl;
     return 2;
-  }
+  }*/
   catch (timing::exception &err) {
     cerr << "caught timing exception: " << err.what () << endl;
     return 2;
